@@ -1,0 +1,63 @@
+import java.math.BigInteger;
+import java.util.*;
+
+public class Main {
+    // Base nundi decimal ki marchu
+    static BigInteger decode(String value, int base) {
+        return new BigInteger(value, base);
+    }
+
+    // P(0) kanukkune function - Lagrange
+    static BigInteger findConstant(BigInteger[] x, BigInteger[] y) {
+        int k = x.length;
+        BigInteger tN = BigInteger.ZERO;
+        BigInteger tD = BigInteger.ONE;
+        for (int i = 0; i < k; i++) {
+            BigInteger n = y[i];
+            BigInteger d = BigInteger.ONE;
+            for (int j = 0; j < k; j++) {
+                if (i == j) continue;
+                n = n.multiply(x[j].negate());
+                d = d.multiply(x[i].subtract(x[j]));
+            }
+            tN = tN.multiply(d).add(n.multiply(tD));
+            tD = tD.multiply(d);
+            BigInteger g = tN.gcd(tD);
+            tN = tN.divide(g); tD = tD.divide(g);
+        }
+        return tN.divide(tD);
+    }
+
+    public static void main(String[] args) {
+        // ----- TEST CASE 1 -----
+        long[] x1v = {1,2,3,6};
+        String[] y1v = {"4","111","12","213"};
+        int[] b1 = {10,2,10,4};
+        BigInteger[] x1 = new BigInteger[4];
+        BigInteger[] y1 = new BigInteger[4];
+        for(int i=0;i<4;i++){
+            x1[i]=BigInteger.valueOf(x1v[i]);
+            y1[i]=decode(y1v[i],b1[i]);
+        }
+        // k=3 kabatti first 3 points chalu
+        BigInteger ans1 = findConstant(
+            new BigInteger[]{x1[0],x1[1],x1[2]},
+            new BigInteger[]{y1[0],y1[1],y1[2]}
+        );
+        System.out.println("Testcase 1 Answer: " + ans1);
+
+        // ----- TEST CASE 2 -----
+        long[] x2v = {1,3,4,5,6,7,9};
+        String[] y2v = {"13444211440455345511","6aeeb69631c227c","e1b5e05623d881f","316034514573652620673","2122212201122002221120200210011020220200","20120221122211000100210021102001201112121","45153788322a1255483"};
+        int[] b2 = {6,15,16,8,3,3,12};
+        BigInteger[] x2 = new BigInteger[7];
+        BigInteger[] y2 = new BigInteger[7];
+        for(int i=0;i<7;i++){
+            x2[i]=BigInteger.valueOf(x2v[i]);
+            y2[i]=decode(y2v[i],b2[i]);
+        }
+        BigInteger ans2 = findConstant(x2, y2);
+        System.out.println("Testcase 2 Answer: " + ans2);
+    }
+}
+Code idi ipudu ikada em output rayalo chepu podhugookulu oko output chepaku
